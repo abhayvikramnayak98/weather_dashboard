@@ -85,6 +85,36 @@ class WeatherSection:
 
             widget.destroy()
 
+    # --------------------------------
+    # Responsive metric layout
+    # --------------------------------
+
+    def layout_metrics(self, columns):
+
+        for metric in self.metrics:
+
+            metric.frame.grid_forget()
+
+        for column in range(columns):
+
+            self.content.columnconfigure(
+                column,
+                weight=1,
+                uniform="metric"
+            )
+
+        for index, metric in enumerate(
+            self.metrics
+        ):
+
+            row = index // columns
+            column = index % columns
+
+            metric.grid(
+                row,
+                column
+            )
+
 class WeatherMetric:
 
     def __init__(
@@ -154,3 +184,207 @@ class WeatherMetric:
             pady=6,
             sticky="nsew"
         )
+
+class CurrentConditionsSection(WeatherSection):
+
+    def __init__(self, parent):
+
+        super().__init__(
+            parent,
+            "Current Conditions"
+        )
+
+        self.condition = WeatherMetric(
+            self.content,
+            "Condition"
+        )
+
+        self.temperature = WeatherMetric(
+            self.content,
+            "Temperature"
+        )
+
+        self.feels_like = WeatherMetric(
+            self.content,
+            "Feels Like"
+        )
+
+        self.humidity = WeatherMetric(
+            self.content,
+            "Humidity"
+        )
+
+        self.dew_point = WeatherMetric(
+            self.content,
+            "Dew Point"
+        )
+
+        self.cloud_cover = WeatherMetric(
+            self.content,
+            "Cloud Cover"
+        )
+
+        self.visibility = WeatherMetric(
+            self.content,
+            "Visibility"
+        )
+
+        self.pressure = WeatherMetric(
+            self.content,
+            "Pressure"
+        )
+
+        self.metrics = [
+            self.condition,
+            self.temperature,
+            self.feels_like,
+            self.humidity,
+            self.dew_point,
+            self.cloud_cover,
+            self.visibility,
+            self.pressure,
+        ]
+
+class WindSection(WeatherSection):
+
+    def __init__(self, parent):
+
+        super().__init__(
+            parent,
+            "Wind"
+        )
+
+        self.direction = WeatherMetric(
+            self.content,
+            "Direction"
+        )
+
+        self.speed = WeatherMetric(
+            self.content,
+            "Speed"
+        )
+
+        self.gusts = WeatherMetric(
+            self.content,
+            "Gusts"
+        )
+
+        self.metrics = [
+            self.direction,
+            self.speed,
+            self.gusts,
+        ]
+
+class PrecipitationSection(WeatherSection):
+
+    def __init__(self, parent):
+
+        super().__init__(
+            parent,
+            "Precipitation"
+        )
+
+        self.precipitation = WeatherMetric(
+            self.content,
+            "Precipitation"
+        )
+
+        self.rain = WeatherMetric(
+            self.content,
+            "Rain"
+        )
+
+        self.metrics = [
+            self.precipitation,
+            self.rain,
+        ]
+
+class AirQualitySection(WeatherSection):
+
+    def __init__(self, parent):
+
+        super().__init__(
+            parent,
+            "Air Quality"
+        )
+
+        self.aqi = WeatherMetric(
+            self.content,
+            "AQI"
+        )
+
+        self.category = WeatherMetric(
+            self.content,
+            "Status"
+        )
+
+        self.pm25 = WeatherMetric(
+            self.content,
+            "PM2.5"
+        )
+
+        self.pm10 = WeatherMetric(
+            self.content,
+            "PM10"
+        )
+
+        self.ozone = WeatherMetric(
+            self.content,
+            "Ozone"
+        )
+
+        self.no2 = WeatherMetric(
+            self.content,
+            "NO₂"
+        )
+
+        self.so2 = WeatherMetric(
+            self.content,
+            "SO₂"
+        )
+
+        self.co = WeatherMetric(
+            self.content,
+            "CO"
+        )
+
+        self.metrics = [
+            self.aqi,
+            self.category,
+            self.pm25,
+            self.pm10,
+            self.ozone,
+            self.no2,
+            self.so2,
+            self.co,
+        ]
+
+class SunUVSection(WeatherSection):
+
+    def __init__(self, parent):
+
+        super().__init__(
+            parent,
+            "Sun & UV"
+        )
+
+        self.uv = WeatherMetric(
+            self.content,
+            "UV Index"
+        )
+
+        self.sunrise = WeatherMetric(
+            self.content,
+            "Sunrise"
+        )
+
+        self.sunset = WeatherMetric(
+            self.content,
+            "Sunset"
+        )
+
+        self.metrics = [
+            self.uv,
+            self.sunrise,
+            self.sunset,
+        ]
