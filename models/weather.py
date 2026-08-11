@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 from utils.weather_conditions import (
     get_weather_description
 )
@@ -78,6 +79,57 @@ class WeatherData:
     nitrogen_dioxide: float | None = None
     sulphur_dioxide: float | None = None
     carbon_monoxide: float | None = None
+
+@dataclass
+class HourlyWeather:
+
+    # --------------------------------
+    # Time
+    # --------------------------------
+
+    time: str
+
+    # --------------------------------
+    # Temperature
+    # --------------------------------
+
+    temperature: Optional[float] = None
+
+    feels_like: Optional[float] = None
+
+    # --------------------------------
+    # Weather condition
+    # --------------------------------
+
+    weather_code: Optional[int] = None
+
+    is_day: Optional[int] = None
+
+    # --------------------------------
+    # Precipitation
+    # --------------------------------
+
+    precipitation: Optional[float] = None
+
+    rain: Optional[float] = None
+
+    precipitation_probability: Optional[float] = None
+
+    # --------------------------------
+    # Wind
+    # --------------------------------
+
+    wind_speed: Optional[float] = None
+
+    wind_direction: Optional[float] = None
+
+    wind_gusts: Optional[float] = None
+
+    # --------------------------------
+    # UV
+    # --------------------------------
+
+    uv_index: Optional[float] = None
 
 def get_aqi_category(aqi):
 
