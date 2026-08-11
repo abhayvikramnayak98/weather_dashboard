@@ -131,7 +131,8 @@ class WeatherDashboard:
 
             self.frame.columnconfigure(
                 column,
-                weight=0
+                weight=0,
+                uniform=""
             )
 
         for row in range(6):
@@ -237,32 +238,38 @@ class WeatherDashboard:
 
             self.frame.columnconfigure(
                 0,
-                weight=1
+                weight=1,
+                uniform=""
             )
 
             self.current_conditions.grid(
                 0,
-                0
+                0,
+                columnspan=1
             )
 
             self.wind.grid(
                 1,
-                0
+                0,
+                columnspan=1
             )
 
             self.precipitation.grid(
                 2,
-                0
+                0,
+                columnspan=1
             )
 
             self.air_quality.grid(
                 3,
-                0
+                0,
+                columnspan=1
             )
 
             self.sun_uv.grid(
                 4,
-                0
+                0,
+                columnspan=1
             )
 
         # --------------------------------

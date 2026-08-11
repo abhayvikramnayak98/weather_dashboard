@@ -103,15 +103,22 @@ class WeatherSection:
 
             metric.frame.grid_forget()
 
-        # Clear previous column configuration.
+        # --------------------------------
+        # Reset columns
+        # --------------------------------
+
         for column in range(8):
 
             self.content.columnconfigure(
                 column,
-                weight=0
+                weight=0,
+                uniform=""
             )
 
-        # Configure active columns.
+        # --------------------------------
+        # Configure active columns
+        # --------------------------------
+
         for column in range(columns):
 
             self.content.columnconfigure(
@@ -120,7 +127,36 @@ class WeatherSection:
                 uniform="metric"
             )
 
-        # Place metrics.
+        # --------------------------------
+        # Reset rows
+        # --------------------------------
+
+        for row in range(8):
+
+            self.content.rowconfigure(
+                row,
+                weight=0
+            )
+
+        # --------------------------------
+        # Configure active rows
+        # --------------------------------
+
+        row_count = (
+            len(self.metrics) + columns - 1
+        ) // columns
+
+        for row in range(row_count):
+
+            self.content.rowconfigure(
+                row,
+                weight=1
+            )
+
+    # --------------------------------
+    # Place metrics
+    # --------------------------------
+
         for index, metric in enumerate(
             self.metrics
         ):
