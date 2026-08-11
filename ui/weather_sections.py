@@ -1,7 +1,12 @@
 from tkinter import ttk
 
 from config.settings import FONT_FAMILY
+from utils.compass import degrees_to_compass
 
+
+# ==============================================
+# Base Weather Section
+# ==============================================
 
 class WeatherSection:
 
@@ -12,7 +17,6 @@ class WeatherSection:
     ):
 
         self.parent = parent
-        self.title = title
 
         self.frame = ttk.Frame(
             parent,
@@ -54,6 +58,8 @@ class WeatherSection:
             expand=True
         )
 
+        self.metrics = []
+
     # --------------------------------
     # Grid placement
     # --------------------------------
@@ -85,15 +91,27 @@ class WeatherSection:
             widget.destroy()
 
     # --------------------------------
-    # Responsive metric layout
+    # Layout metrics
     # --------------------------------
 
-    def layout_metrics(self, columns):
+    def layout_metrics(
+        self,
+        columns
+    ):
 
         for metric in self.metrics:
 
             metric.frame.grid_forget()
 
+        # Clear previous column configuration.
+        for column in range(8):
+
+            self.content.columnconfigure(
+                column,
+                weight=0
+            )
+
+        # Configure active columns.
         for column in range(columns):
 
             self.content.columnconfigure(
@@ -102,6 +120,7 @@ class WeatherSection:
                 uniform="metric"
             )
 
+        # Place metrics.
         for index, metric in enumerate(
             self.metrics
         ):
@@ -115,10 +134,13 @@ class WeatherSection:
             )
 
     # --------------------------------
-    # Determine metric columns
+    # Responsive layout
     # --------------------------------
 
-    def responsive_layout(self, width):
+    def responsive_layout(
+        self,
+        width
+    ):
 
         if width >= 900:
 
@@ -136,6 +158,11 @@ class WeatherSection:
             columns
         )
 
+
+# ==============================================
+# Weather Metric
+# ==============================================
+
 class WeatherMetric:
 
     def __init__(
@@ -146,9 +173,12 @@ class WeatherMetric:
     ):
 
         self.frame = ttk.Frame(
-            parent,
-            style="WeatherCard.TFrame"
+            parent
         )
+
+        # --------------------------------
+        # Metric label
+        # --------------------------------
 
         self.label = ttk.Label(
             self.frame,
@@ -165,6 +195,10 @@ class WeatherMetric:
         self.label.pack(
             fill="x"
         )
+
+        # --------------------------------
+        # Metric value
+        # --------------------------------
 
         self.value = ttk.Label(
             self.frame,
@@ -183,6 +217,10 @@ class WeatherMetric:
             pady=(3, 0)
         )
 
+    # --------------------------------
+    # Update value
+    # --------------------------------
+
     def set_value(
         self,
         value
@@ -191,6 +229,10 @@ class WeatherMetric:
         self.value.config(
             text=value
         )
+
+    # --------------------------------
+    # Grid placement
+    # --------------------------------
 
     def grid(
         self,
@@ -206,7 +248,14 @@ class WeatherMetric:
             sticky="nsew"
         )
 
-class CurrentConditionsSection(WeatherSection):
+
+# ==============================================
+# Current Conditions
+# ==============================================
+
+class CurrentConditionsSection(
+    WeatherSection
+):
 
     def __init__(self, parent):
 
@@ -266,7 +315,59 @@ class CurrentConditionsSection(WeatherSection):
             self.pressure,
         ]
 
-class WindSection(WeatherSection):
+    # --------------------------------
+    # Update
+    # --------------------------------
+
+    def update(
+        self,
+        weather
+    ):
+
+        self.condition.set_value(
+            weather.weather_description
+        )
+
+        self.temperature.set_value(
+            f"{weather.temperature:.1f} °C"
+        )
+
+        self.feels_like.set_value(
+            f"{weather.feels_like:.1f} °C"
+        )
+
+        self.humidity.set_value(
+            f"{weather.humidity:.0f}%"
+        )
+
+        self.dew_point.set_value(
+            f"{weather.dew_point:.1f} °C"
+        )
+
+        self.cloud_cover.set_value(
+            f"{weather.cloud_cover:.0f}%"
+        )
+
+        visibility_km = (
+            weather.visibility / 1000
+        )
+
+        self.visibility.set_value(
+            f"{visibility_km:.1f} km"
+        )
+
+        self.pressure.set_value(
+            f"{weather.surface_pressure:.0f} hPa"
+        )
+
+
+# ==============================================
+# Wind
+# ==============================================
+
+class WindSection(
+    WeatherSection
+):
 
     def __init__(self, parent):
 
@@ -296,7 +397,39 @@ class WindSection(WeatherSection):
             self.gusts,
         ]
 
-class PrecipitationSection(WeatherSection):
+    # --------------------------------
+    # Update
+    # --------------------------------
+
+    def update(
+        self,
+        weather
+    ):
+
+        direction = degrees_to_compass(
+            weather.wind_direction
+        )
+
+        self.direction.set_value(
+            f"{weather.wind_direction:.0f}° {direction}"
+        )
+
+        self.speed.set_value(
+            f"{weather.wind_speed:.1f} km/h"
+        )
+
+        self.gusts.set_value(
+            f"{weather.wind_gusts:.1f} km/h"
+        )
+
+
+# ==============================================
+# Precipitation
+# ==============================================
+
+class PrecipitationSection(
+    WeatherSection
+):
 
     def __init__(self, parent):
 
@@ -320,7 +453,31 @@ class PrecipitationSection(WeatherSection):
             self.rain,
         ]
 
-class AirQualitySection(WeatherSection):
+    # --------------------------------
+    # Update
+    # --------------------------------
+
+    def update(
+        self,
+        weather
+    ):
+
+        self.precipitation.set_value(
+            f"{weather.precipitation:.1f} mm"
+        )
+
+        self.rain.set_value(
+            f"{weather.rain:.1f} mm"
+        )
+
+
+# ==============================================
+# Air Quality
+# ==============================================
+
+class AirQualitySection(
+    WeatherSection
+):
 
     def __init__(self, parent):
 
@@ -351,7 +508,7 @@ class AirQualitySection(WeatherSection):
 
         self.ozone = WeatherMetric(
             self.content,
-            "Ozone"
+            "O₃"
         )
 
         self.no2 = WeatherMetric(
@@ -380,7 +537,90 @@ class AirQualitySection(WeatherSection):
             self.co,
         ]
 
-class SunUVSection(WeatherSection):
+    # --------------------------------
+    # Update
+    # --------------------------------
+
+    def update(
+        self,
+        weather
+    ):
+
+        if weather.aqi is not None:
+
+            self.aqi.set_value(
+                f"{weather.aqi:.0f}"
+            )
+
+        else:
+
+            self.aqi.set_value(
+                "—"
+            )
+
+        self.category.set_value(
+            weather.aqi_category or "—"
+        )
+
+        self.pm25.set_value(
+            self.format_pollutant(
+                weather.pm25
+            )
+        )
+
+        self.pm10.set_value(
+            self.format_pollutant(
+                weather.pm10
+            )
+        )
+
+        self.ozone.set_value(
+            self.format_pollutant(
+                weather.ozone
+            )
+        )
+
+        self.no2.set_value(
+            self.format_pollutant(
+                weather.nitrogen_dioxide
+            )
+        )
+
+        self.so2.set_value(
+            self.format_pollutant(
+                weather.sulphur_dioxide
+            )
+        )
+
+        self.co.set_value(
+            self.format_pollutant(
+                weather.carbon_monoxide
+            )
+        )
+
+    # --------------------------------
+    # Format pollutant
+    # --------------------------------
+
+    @staticmethod
+    def format_pollutant(
+        value
+    ):
+
+        if value is None:
+
+            return "—"
+
+        return f"{value:.1f} μg/m³"
+
+
+# ==============================================
+# Sun & UV
+# ==============================================
+
+class SunUVSection(
+    WeatherSection
+):
 
     def __init__(self, parent):
 
@@ -409,3 +649,52 @@ class SunUVSection(WeatherSection):
             self.sunrise,
             self.sunset,
         ]
+
+    # --------------------------------
+    # Update
+    # --------------------------------
+
+    def update(
+        self,
+        weather
+    ):
+
+        self.uv.set_value(
+            f"{weather.uv_index:.1f}"
+        )
+
+        self.sunrise.set_value(
+            self.format_time(
+                weather.sunrise
+            )
+        )
+
+        self.sunset.set_value(
+            self.format_time(
+                weather.sunset
+            )
+        )
+
+    # --------------------------------
+    # Format ISO time
+    # --------------------------------
+
+    @staticmethod
+    def format_time(
+        value
+    ):
+
+        if not value:
+
+            return "—"
+
+        try:
+
+            return value.split("T")[1]
+
+        except (
+            IndexError,
+            AttributeError
+        ):
+
+            return value

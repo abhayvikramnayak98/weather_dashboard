@@ -18,7 +18,7 @@ from services.weather_service import fetch_weather
 
 from ui.clock import Clock
 from ui.search_bar import SearchBar
-from ui.weather_cards import WeatherCards
+from ui.weather_dashboard import WeatherDashboard
 
 
 class MainWindow:
@@ -150,10 +150,10 @@ class MainWindow:
         )
 
         # --------------------------------
-        # Weather Cards
+        # Weather Dashboard
         # --------------------------------
 
-        self.weather_cards = WeatherCards(
+        self.weather_cards = WeatherDashboard(
             self.root
         )
 
