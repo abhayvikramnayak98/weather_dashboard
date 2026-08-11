@@ -14,17 +14,48 @@ def get_current_weather(
         params={
             "latitude": latitude,
             "longitude": longitude,
+
+            # --------------------------------
+            # Current weather variables
+            # --------------------------------
+
             "current": (
-    "temperature_2m,"
-    "apparent_temperature,"
-    "relative_humidity_2m,"
-    "wind_speed_10m,"
-    "wind_direction_10m,"
-    "visibility,"
-    "weather_code"
-),
+                "temperature_2m,"
+                "apparent_temperature,"
+                "relative_humidity_2m,"
+                "wind_speed_10m,"
+                "wind_direction_10m,"
+                "wind_gusts_10m,"
+                "visibility,"
+                "weather_code,"
+                "dew_point_2m,"
+                "cloud_cover,"
+                "precipitation,"
+                "rain,"
+                "surface_pressure,"
+                "uv_index,"
+                "is_day"
+            ),
+
+            # --------------------------------
+            # Daily variables
+            # --------------------------------
+
+            "daily": (
+                "sunrise,"
+                "sunset"
+            ),
+
+            # --------------------------------
+            # Location timezone
+            # --------------------------------
+
             "timezone": timezone,
+
+            # We only need today's sunrise/sunset.
+            "forecast_days": 1,
         },
+
         timeout=10,
     )
 

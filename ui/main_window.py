@@ -254,6 +254,19 @@ class MainWindow:
         self.status_label.config(
             text="Updated just now"
         )
+        
+        print("Temperature:", weather.temperature)
+        print("Feels like:", weather.feels_like)
+        print("Dew point:", weather.dew_point)
+        print("Cloud cover:", weather.cloud_cover)
+        print("Precipitation:", weather.precipitation)
+        print("Rain:", weather.rain)
+        print("Wind gusts:", weather.wind_gusts)
+        print("Pressure:", weather.surface_pressure)
+        print("UV:", weather.uv_index)
+        print("Day:", weather.is_day)
+        print("Sunrise:", weather.sunrise)
+        print("Sunset:", weather.sunset)
 
         self.schedule_refresh()
 
