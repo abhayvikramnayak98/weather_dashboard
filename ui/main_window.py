@@ -294,9 +294,9 @@ class MainWindow:
             weather.carbon_monoxide
         )
 
-print(
-    "================================="
-)
+        print(
+            "================================="
+        )
 
         self.status_label.config(
             text="Updated just now"
