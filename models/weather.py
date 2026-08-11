@@ -80,6 +80,12 @@ class WeatherData:
     sulphur_dioxide: float | None = None
     carbon_monoxide: float | None = None
 
+    # --------------------------------
+    # Hourly forecast
+    # --------------------------------
+
+    hourly_forecast: list["HourlyWeather"] | None = None
+
 @dataclass
 class HourlyWeather:
 
@@ -159,6 +165,186 @@ def create_weather_data(
 ):
 
     current = weather_response["current"]
+
+    # --------------------------------
+    # Hourly weather
+    # --------------------------------
+
+    hourly = (
+        weather_response.get(
+            "hourly",
+            {}
+        )
+    )
+
+    hourly_times = hourly.get(
+        "time",
+        []
+    )
+
+    hourly_temperatures = hourly.get(
+        "temperature_2m",
+        []
+    )
+
+    hourly_feels_like = hourly.get(
+        "apparent_temperature",
+        []
+    )
+
+    hourly_weather_codes = hourly.get(
+        "weather_code",
+        []
+    )
+
+    hourly_is_day = hourly.get(
+        "is_day",
+        []
+    )
+
+    hourly_precipitation = hourly.get(
+        "precipitation",
+        []
+    )
+
+    hourly_rain = hourly.get(
+        "rain",
+        []
+    )
+
+    hourly_precipitation_probability = (
+        hourly.get(
+            "precipitation_probability",
+            []
+        )
+    )
+
+    hourly_wind_speed = hourly.get(
+        "wind_speed_10m",
+        []
+    )
+
+    hourly_wind_direction = hourly.get(
+        "wind_direction_10m",
+        []
+    )
+
+    hourly_wind_gusts = hourly.get(
+        "wind_gusts_10m",
+        []
+    )
+
+    hourly_uv = hourly.get(
+        "uv_index",
+        []
+    )
+
+    # --------------------------------
+    # Create hourly objects
+    # --------------------------------
+
+    hourly_forecast = []
+
+    for index, time in enumerate(
+        hourly_times
+    ):
+
+        hourly_forecast.append(
+            HourlyWeather(
+
+                time=time,
+
+                temperature=(
+                    hourly_temperatures[index]
+                    if index < len(
+                        hourly_temperatures
+                    )
+                    else None
+                ),
+
+                feels_like=(
+                    hourly_feels_like[index]
+                    if index < len(
+                        hourly_feels_like
+                    )
+                    else None
+                ),
+
+                weather_code=(
+                    hourly_weather_codes[index]
+                    if index < len(
+                        hourly_weather_codes
+                    )
+                    else None
+                ),
+
+                is_day=(
+                    hourly_is_day[index]
+                    if index < len(
+                        hourly_is_day
+                    )
+                    else None
+                ),
+
+                precipitation=(
+                    hourly_precipitation[index]
+                    if index < len(
+                        hourly_precipitation
+                    )
+                    else None
+                ),
+
+                rain=(
+                    hourly_rain[index]
+                    if index < len(
+                        hourly_rain
+                    )
+                    else None
+                ),
+
+                precipitation_probability=(
+                    hourly_precipitation_probability[
+                        index
+                    ]
+                    if index < len(
+                        hourly_precipitation_probability
+                    )
+                    else None
+                ),
+
+                wind_speed=(
+                    hourly_wind_speed[index]
+                    if index < len(
+                        hourly_wind_speed
+                    )
+                    else None
+                ),
+
+                wind_direction=(
+                    hourly_wind_direction[index]
+                    if index < len(
+                        hourly_wind_direction
+                    )
+                    else None
+                ),
+
+                wind_gusts=(
+                    hourly_wind_gusts[index]
+                    if index < len(
+                        hourly_wind_gusts
+                    )
+                    else None
+                ),
+
+                uv_index=(
+                    hourly_uv[index]
+                    if index < len(
+                        hourly_uv
+                    )
+                    else None
+                ),
+            )
+        )
 
     # --------------------------------
     # Air quality
@@ -335,4 +521,10 @@ def create_weather_data(
         carbon_monoxide=air_current.get(
             "carbon_monoxide"
         ),
+        
+        # --------------------------------
+        # Hourly forecast
+        # --------------------------------
+
+        hourly_forecast=hourly_forecast,
     )

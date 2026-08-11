@@ -38,6 +38,24 @@ def get_current_weather(
             ),
 
             # --------------------------------
+            # Hourly weather variables
+            # --------------------------------
+
+            "hourly": (
+                "temperature_2m,"
+                "apparent_temperature,"
+                "weather_code,"
+                "is_day,"
+                "precipitation,"
+                "rain,"
+                "precipitation_probability,"
+                "wind_speed_10m,"
+                "wind_direction_10m,"
+                "wind_gusts_10m,"
+                "uv_index"
+            ),
+
+            # --------------------------------
             # Daily variables
             # --------------------------------
 
