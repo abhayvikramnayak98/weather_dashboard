@@ -20,8 +20,7 @@ class WeatherDashboard:
         )
 
         self.frame.pack(
-            fill="both",
-            expand=True,
+            fill="x",
             padx=10,
             pady=8
         )

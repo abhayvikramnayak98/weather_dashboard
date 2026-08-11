@@ -19,7 +19,7 @@ from services.weather_service import fetch_weather
 from ui.clock import Clock
 from ui.search_bar import SearchBar
 from ui.weather_dashboard import WeatherDashboard
-
+from ui.scrollable_frame import ScrollableFrame
 
 class MainWindow:
 
@@ -150,11 +150,19 @@ class MainWindow:
         )
 
         # --------------------------------
+        # Scrollable Weather Area
+        # --------------------------------
+
+        self.weather_scroll = ScrollableFrame(
+            self.root
+        )
+
+        # --------------------------------
         # Weather Dashboard
         # --------------------------------
 
         self.weather_cards = WeatherDashboard(
-            self.root
+            self.weather_scroll.content
         )
 
     # --------------------------------
