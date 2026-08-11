@@ -66,8 +66,37 @@ class WeatherData:
     # --------------------------------
 
     aqi: float | None = None
-    pm25: float | None = None
+    aqi_category: str | None = None
 
+    pm25: float | None = None
+    pm10: float | None = None
+
+    ozone: float | None = None
+    nitrogen_dioxide: float | None = None
+    sulphur_dioxide: float | None = None
+    carbon_monoxide: float | None = None
+
+def get_aqi_category(aqi):
+
+    if aqi is None:
+        return None
+
+    if aqi <= 50:
+        return "Good"
+
+    if aqi <= 100:
+        return "Moderate"
+
+    if aqi <= 150:
+        return "Unhealthy for Sensitive Groups"
+
+    if aqi <= 200:
+        return "Unhealthy"
+
+    if aqi <= 300:
+        return "Very Unhealthy"
+
+    return "Hazardous"
 
 def create_weather_data(
     weather_response,
@@ -85,6 +114,10 @@ def create_weather_data(
             "current",
             {}
         )
+    )
+
+    aqi = air_current.get(
+        "us_aqi"
     )
 
     # --------------------------------
@@ -202,11 +235,33 @@ def create_weather_data(
         sunset=sunset,
 
         # Air quality
-        aqi=air_current.get(
-            "us_aqi"
+        aqi=aqi,
+
+        aqi_category=get_aqi_category(
+            aqi
         ),
 
         pm25=air_current.get(
             "pm2_5"
+        ),
+
+        pm10=air_current.get(
+            "pm10"
+        ),
+
+        ozone=air_current.get(
+            "ozone"
+        ),
+
+        nitrogen_dioxide=air_current.get(
+            "nitrogen_dioxide"
+        ),
+
+        sulphur_dioxide=air_current.get(
+            "sulphur_dioxide"
+        ),
+
+        carbon_monoxide=air_current.get(
+            "carbon_monoxide"
         ),
     )

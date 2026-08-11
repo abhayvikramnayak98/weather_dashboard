@@ -251,10 +251,57 @@ class MainWindow:
             weather
         )
 
+        print()
+        print("========== AIR QUALITY ==========")
+
+        print(
+            "AQI:",
+            weather.aqi
+        )
+
+        print(
+            "AQI Category:",
+            weather.aqi_category
+        )
+
+        print(
+            "PM2.5:",
+            weather.pm25
+        )
+
+        print(
+            "PM10:",
+            weather.pm10
+        )
+
+        print(
+            "Ozone:",
+            weather.ozone
+        )
+
+        print(
+            "NO2:",
+            weather.nitrogen_dioxide
+        )
+
+        print(
+            "SO2:",
+            weather.sulphur_dioxide
+        )
+
+        print(
+            "CO:",
+            weather.carbon_monoxide
+        )
+
+print(
+    "================================="
+)
+
         self.status_label.config(
             text="Updated just now"
         )
-        
+
         print("Temperature:", weather.temperature)
         print("Feels like:", weather.feels_like)
         print("Dew point:", weather.dew_point)
