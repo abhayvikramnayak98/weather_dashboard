@@ -184,22 +184,14 @@ class HourlyForecastCard:
         # Display time
         # --------------------------------
 
-        if "T" in time_text:
-
-            time_text = time_text.split(
-                "T",
-                1
-            )[1]
-
-        if ":" in time_text:
-
-            time_text = time_text[:5]
-
         if is_current_hour:
 
-            time_text = (
-                f"NOW\n"
-                f"{time_text}"
+            time_text = "NOW"
+
+        else:
+
+            time_text = self.format_time(
+                hour.time
             )
 
         self.time_label.config(
@@ -279,6 +271,50 @@ class HourlyForecastCard:
             self.wind_label.config(
                 text="Wind —"
             )
+
+    # --------------------------------
+    # Format forecast time
+    # --------------------------------
+
+    @staticmethod
+    def format_time(
+        time_text
+    ):
+
+        try:
+
+            if "T" in time_text:
+
+                time_text = time_text.split(
+                    "T",
+                    1
+                )[1]
+
+            hour = int(
+                time_text[:2]
+            )
+
+            if hour == 0:
+
+                return "12 AM"
+
+            if hour < 12:
+
+                return f"{hour} AM"
+
+            if hour == 12:
+
+                return "12 PM"
+
+            return f"{hour - 12} PM"
+
+        except (
+            ValueError,
+            TypeError,
+            IndexError
+        ):
+
+            return time_text
 
     # --------------------------------
     # Weather symbol
