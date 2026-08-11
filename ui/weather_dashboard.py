@@ -73,10 +73,6 @@ class WeatherDashboard:
             self.on_resize
         )
 
-        self.current_layout = None
-
-        self.update_layout()
-
     # --------------------------------
     # Responsive layout
     # --------------------------------
@@ -86,11 +82,7 @@ class WeatherDashboard:
         event
     ):
 
-        self.update_layout()
-
-    def update_layout(self):
-
-        width = self.frame.winfo_width()
+        width = event.width
 
         if width <= 1:
 
@@ -108,14 +100,9 @@ class WeatherDashboard:
 
             layout = "narrow"
 
-        if layout == self.current_layout:
-
-            return
-
-        self.current_layout = layout
-
         self.apply_layout(
-            layout
+            layout,
+            width
         )
 
     # --------------------------------
@@ -124,14 +111,22 @@ class WeatherDashboard:
 
     def apply_layout(
         self,
-        layout
+        layout,
+        width
     ):
+
+        # --------------------------------
+        # Remove current section placement
+        # --------------------------------
 
         for section in self.sections:
 
             section.frame.grid_forget()
 
-        # Reset grid.
+        # --------------------------------
+        # Reset grid configuration
+        # --------------------------------
+
         for column in range(3):
 
             self.frame.columnconfigure(
@@ -164,32 +159,27 @@ class WeatherDashboard:
                 uniform="section"
             )
 
-            # Current conditions
             self.current_conditions.grid(
                 0,
                 0,
                 columnspan=2
             )
 
-            # Wind
             self.wind.grid(
                 1,
                 0
             )
 
-            # Precipitation
             self.precipitation.grid(
                 1,
                 1
             )
 
-            # Air quality
             self.air_quality.grid(
                 2,
                 0
             )
 
-            # Sun / UV
             self.sun_uv.grid(
                 2,
                 1
@@ -282,7 +272,7 @@ class WeatherDashboard:
         for section in self.sections:
 
             section.responsive_layout(
-                self.frame.winfo_width()
+                width
             )
 
     # --------------------------------
