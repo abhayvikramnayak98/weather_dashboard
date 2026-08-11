@@ -8,6 +8,8 @@ from ui.weather_sections import (
     SunUVSection,
 )
 
+from ui.hourly_forecast import HourlyForecastSection
+
 
 class WeatherDashboard:
 
@@ -52,6 +54,14 @@ class WeatherDashboard:
         )
 
         self.sun_uv = SunUVSection(
+            self.frame
+        )
+
+        # --------------------------------
+        # Hourly forecast
+        # --------------------------------
+
+        self.hourly_forecast = HourlyForecastSection(
             self.frame
         )
 
@@ -134,7 +144,7 @@ class WeatherDashboard:
                 uniform=""
             )
 
-        for row in range(6):
+        for row in range(8):
 
             self.frame.rowconfigure(
                 row,
@@ -185,6 +195,12 @@ class WeatherDashboard:
                 1
             )
 
+            self.hourly_forecast.grid(
+                3,
+                0,
+                columnspan=2
+            )
+
         # --------------------------------
         # Medium
         # --------------------------------
@@ -229,6 +245,12 @@ class WeatherDashboard:
                 1
             )
 
+            self.hourly_forecast.grid(
+                3,
+                0,
+                columnspan=2
+            )
+
         # --------------------------------
         # Narrow
         # --------------------------------
@@ -267,6 +289,12 @@ class WeatherDashboard:
 
             self.sun_uv.grid(
                 4,
+                0,
+                columnspan=1
+            )
+
+            self.hourly_forecast.grid(
+                5,
                 0,
                 columnspan=1
             )
@@ -310,11 +338,19 @@ class WeatherDashboard:
             weather
         )
 
+        self.hourly_forecast.update(
+            weather.hourly_forecast or []
+        )
+
     # --------------------------------
     # Loading state
     # --------------------------------
 
     def update_loading(self):
+
+        # --------------------------------
+        # Existing weather sections
+        # --------------------------------
 
         for section in self.sections:
 
@@ -323,3 +359,11 @@ class WeatherDashboard:
                 metric.set_value(
                     "Loading..."
                 )
+
+        # --------------------------------
+        # Clear hourly forecast
+        # --------------------------------
+
+        self.hourly_forecast.update(
+            []
+        )
