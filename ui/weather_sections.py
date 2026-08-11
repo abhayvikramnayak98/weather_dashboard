@@ -46,8 +46,7 @@ class WeatherSection:
         # --------------------------------
 
         self.content = ttk.Frame(
-            self.frame,
-            style="WeatherCard.TFrame"
+            self.frame
         )
 
         self.content.pack(
