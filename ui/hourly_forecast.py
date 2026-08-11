@@ -19,7 +19,7 @@ class HourlyForecastCard:
 
         self.frame = ttk.Frame(
             parent,
-            padding=(10, 8)
+            padding=(12, 8)
         )
 
         # --------------------------------
@@ -96,7 +96,7 @@ class HourlyForecastCard:
 
         self.feels_like_label.pack(
             fill="x",
-            pady=(2, 5)
+            pady=(3, 6)
         )
 
         # --------------------------------
@@ -133,7 +133,7 @@ class HourlyForecastCard:
 
         self.wind_label.pack(
             fill="x",
-            pady=(2, 0)
+            pady=(3, 0)
         )
 
     # --------------------------------
