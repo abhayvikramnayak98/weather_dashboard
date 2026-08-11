@@ -256,7 +256,8 @@ class MainWindow:
             return
 
         self.weather_cards.update(
-            weather
+            weather,
+            self.selected_location.timezone
         )
 
         self.schedule_refresh()

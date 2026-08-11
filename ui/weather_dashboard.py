@@ -315,7 +315,8 @@ class WeatherDashboard:
 
     def update(
         self,
-        weather
+        weather,
+        timezone_name = None
     ):
 
         self.current_conditions.update(
@@ -339,7 +340,8 @@ class WeatherDashboard:
         )
 
         self.hourly_forecast.update(
-            weather.hourly_forecast or []
+            weather.hourly_forecast or [],
+            timezone_name
         )
 
     # --------------------------------

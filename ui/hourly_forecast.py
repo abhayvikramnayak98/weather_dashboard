@@ -1,4 +1,5 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import tkinter as tk
 from tkinter import ttk
@@ -142,7 +143,8 @@ class HourlyForecastCard:
 
     def update(
         self,
-        hour
+        hour,
+        current_time = None
     ):
 
         # --------------------------------
@@ -157,17 +159,23 @@ class HourlyForecastCard:
                 time_text
             )
 
-            current_time = datetime.now()
+            # Make the forecast timestamp use the
+            # same timezone as current_time.
+            if (
+                current_time is not None
+                and
+                forecast_time.tzinfo is None
+            ):
+
+                forecast_time = forecast_time.replace(
+                    tzinfo=current_time.tzinfo
+                )
 
             is_current_hour = (
-                forecast_time.year
-                == current_time.year
+                current_time is not None
                 and
-                forecast_time.month
-                == current_time.month
-                and
-                forecast_time.day
-                == current_time.day
+                forecast_time.date()
+                == current_time.date()
                 and
                 forecast_time.hour
                 == current_time.hour
@@ -554,14 +562,41 @@ class HourlyForecastSection:
 
     def update(
         self,
-        hourly_forecast
+        hourly_forecast,
+        timezone_name=None
     ):
+
+        # --------------------------------
+        # Remove existing cards
+        # --------------------------------
 
         for card in self.cards:
 
             card.frame.destroy()
 
         self.cards.clear()
+
+        # --------------------------------
+        # Current time for forecast location
+        # --------------------------------
+
+        current_time = None
+
+        if timezone_name:
+
+            try:
+
+                current_time = datetime.now(
+                    ZoneInfo(timezone_name)
+                )
+
+            except Exception:
+
+                current_time = None
+
+        # --------------------------------
+        # Create forecast cards
+        # --------------------------------
 
         for hour in hourly_forecast:
 
@@ -570,7 +605,8 @@ class HourlyForecastSection:
             )
 
             card.update(
-                hour
+                hour,
+                current_time
             )
 
             card.grid(
@@ -581,6 +617,10 @@ class HourlyForecastSection:
             self.cards.append(
                 card
             )
+
+        # --------------------------------
+        # Update scroll region
+        # --------------------------------
 
         self.content.update_idletasks()
 
