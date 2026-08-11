@@ -346,6 +346,43 @@ def create_weather_data(
             )
         )
 
+        # --------------------------------
+    # TEMPORARY: Inspect hourly data
+    # --------------------------------
+
+    print()
+    print("========== HOURLY FORECAST ==========")
+
+    print(
+        "Total hourly records:",
+        len(hourly_forecast)
+    )
+
+    for hour in hourly_forecast[:5]:
+
+        print(
+            hour.time,
+            "| Temp:",
+            hour.temperature,
+            "| Feels like:",
+            hour.feels_like,
+            "| Code:",
+            hour.weather_code,
+            "| Precip %:",
+            hour.precipitation_probability,
+            "| Wind:",
+            hour.wind_speed,
+            "| Direction:",
+            hour.wind_direction,
+            "| UV:",
+            hour.uv_index
+        )
+
+    print(
+        "====================================="
+    )
+    print()    
+
     # --------------------------------
     # Air quality
     # --------------------------------
