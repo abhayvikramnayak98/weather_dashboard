@@ -245,12 +245,43 @@ class WeatherMetric:
                 "bold"
             ),
             style="WeatherMetric.TLabel",
-            anchor="w"
+            anchor="w",
+            justify="left",
+            wraplength=1
         )
 
         self.value.pack(
             fill="x",
             pady=(3, 0)
+        )
+
+        # --------------------------------
+        # Responsive value wrapping
+        # --------------------------------
+
+        self.frame.bind(
+            "<Configure>",
+            self.on_resize
+        )
+
+    # --------------------------------
+    # Responsive value layout
+    # --------------------------------
+
+    def on_resize(
+        self,
+        event
+    ):
+
+        width = event.width
+
+        wrap_width = max(
+            width - 16,
+            1
+        )
+
+        self.value.configure(
+            wraplength=wrap_width
         )
 
     # --------------------------------
