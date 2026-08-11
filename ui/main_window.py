@@ -252,6 +252,26 @@ class MainWindow:
         )
 
         print()
+        print("========== WEATHER CONDITION ==========")
+
+        print(
+            "Code:",
+            weather.weather_code
+        )
+
+        print(
+            "Description:",
+            weather.weather_description
+        )
+
+        print(
+            "Day/Night:",
+            "Day" if weather.is_day else "Night"
+        )
+
+        print("=======================================")
+
+        print()
         print("========== AIR QUALITY ==========")
 
         print(

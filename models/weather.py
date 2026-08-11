@@ -1,5 +1,7 @@
 from dataclasses import dataclass
-
+from utils.weather_conditions import (
+    get_weather_description
+)
 
 @dataclass
 class WeatherData:
@@ -46,6 +48,7 @@ class WeatherData:
     # --------------------------------
 
     weather_code: int
+    weather_description: str
     is_day: int
 
     # --------------------------------
@@ -158,6 +161,20 @@ def create_weather_data(
     )
 
     # --------------------------------
+    # Weather condition
+    # --------------------------------
+
+    weather_code = current[
+        "weather_code"
+    ]
+
+    weather_description = (
+        get_weather_description(
+            weather_code
+        )
+    )
+
+    # --------------------------------
     # Create WeatherData
     # --------------------------------
 
@@ -217,9 +234,11 @@ def create_weather_data(
         ],
 
         # Weather condition
-        weather_code=current[
-            "weather_code"
-        ],
+        weather_code=weather_code,
+
+        weather_description=(
+            weather_description
+        ),
 
         is_day=current[
             "is_day"
