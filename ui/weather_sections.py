@@ -115,6 +115,28 @@ class WeatherSection:
                 column
             )
 
+    # --------------------------------
+    # Determine metric columns
+    # --------------------------------
+
+    def responsive_layout(self, width):
+
+        if width >= 900:
+
+            columns = 4
+
+        elif width >= 600:
+
+            columns = 2
+
+        else:
+
+            columns = 1
+
+        self.layout_metrics(
+            columns
+        )
+
 class WeatherMetric:
 
     def __init__(
