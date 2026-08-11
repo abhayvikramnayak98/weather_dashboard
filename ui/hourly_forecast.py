@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import tkinter as tk
 from tkinter import ttk
 
@@ -143,8 +145,44 @@ class HourlyForecastCard:
         hour
     ):
 
-        # Time
+        # --------------------------------
+        # Time / current hour
+        # --------------------------------
+
         time_text = hour.time
+
+        try:
+
+            forecast_time = datetime.fromisoformat(
+                time_text
+            )
+
+            current_time = datetime.now()
+
+            is_current_hour = (
+                forecast_time.year
+                == current_time.year
+                and
+                forecast_time.month
+                == current_time.month
+                and
+                forecast_time.day
+                == current_time.day
+                and
+                forecast_time.hour
+                == current_time.hour
+            )
+
+        except (
+            ValueError,
+            TypeError
+        ):
+
+            is_current_hour = False
+
+        # --------------------------------
+        # Display time
+        # --------------------------------
 
         if "T" in time_text:
 
@@ -152,6 +190,17 @@ class HourlyForecastCard:
                 "T",
                 1
             )[1]
+
+        if ":" in time_text:
+
+            time_text = time_text[:5]
+
+        if is_current_hour:
+
+            time_text = (
+                f"NOW\n"
+                f"{time_text}"
+            )
 
         self.time_label.config(
             text=time_text
