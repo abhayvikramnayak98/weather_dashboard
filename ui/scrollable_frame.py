@@ -114,10 +114,10 @@ class ScrollableFrame:
     ):
 
         self.canvas.configure(
-            scrollregion=self.canvas.bbox(
-                "all"
-            )
+            scrollregion=self.canvas.bbox("all")
         )
+
+        self.update_scrollbar()
 
     # --------------------------------
     # Canvas width changed
@@ -132,6 +132,39 @@ class ScrollableFrame:
             self.window_id,
             width=event.width
         )
+
+        self.update_scrollbar()
+
+    # --------------------------------
+    # Responsive vertical scrollbar
+    # --------------------------------
+
+    def update_scrollbar(self):
+
+        self.parent.after_idle(
+            self._update_scrollbar
+        )
+
+
+    def _update_scrollbar(self):
+
+        bbox = self.canvas.bbox("all")
+
+        if not bbox:
+            return
+
+        content_height = bbox[3] - bbox[1]
+        canvas_height = self.canvas.winfo_height()
+
+        if content_height > canvas_height:
+            if not self.scrollbar.winfo_ismapped():
+                self.scrollbar.pack(
+                    side="right",
+                    fill="y"
+                )
+        else:
+            if self.scrollbar.winfo_ismapped():
+                self.scrollbar.pack_forget()
 
     # --------------------------------
     # Bind mouse wheel

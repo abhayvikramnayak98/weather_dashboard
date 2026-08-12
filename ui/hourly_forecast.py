@@ -470,14 +470,13 @@ class HourlyForecastSection:
 
         self.canvas = tk.Canvas(
             self.frame,
-            height=170,
+            height=160,
             highlightthickness=0,
             borderwidth=0
         )
 
         self.canvas.pack(
-            fill="x",
-            expand=True
+            fill="x"
         )
 
         # --------------------------------
