@@ -71,7 +71,7 @@ def get_current_weather(
             "timezone": timezone,
 
             # We only need today's sunrise/sunset.
-            "forecast_days": 1,
+            "forecast_days": 2,
         },
 
         timeout=10,

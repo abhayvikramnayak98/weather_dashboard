@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import tkinter as tk
@@ -595,41 +595,61 @@ class HourlyForecastSection:
                 current_time = None
 
         # --------------------------------
-        # Remove previous hours
+        # 24-hour forecast window
         # --------------------------------
+
+        forecast_start = None
+        forecast_end = None
 
         if current_time is not None:
 
-            filtered_forecast = []
+            forecast_start = current_time.replace(
+                minute=0,
+                second=0,
+                microsecond=0
+            )
 
-            for hour in hourly_forecast:
+            forecast_end = (
+                forecast_start
+                + timedelta(hours=24)
+            )
 
-                try:
 
-                    forecast_time = datetime.fromisoformat(
-                        hour.time
+        # --------------------------------
+        # Keep only the next 24 hours
+        # --------------------------------
+
+        filtered_forecast = []
+
+        for hour in hourly_forecast:
+
+            try:
+
+                forecast_time = datetime.fromisoformat(
+                    hour.time
+                )
+
+                if current_time is not None:
+
+                    forecast_time = forecast_time.replace(
+                        tzinfo=current_time.tzinfo
                     )
 
-                    if forecast_time >= current_time.replace(
-                        minute=0,
-                        second=0,
-                        microsecond=0
+                    if not (
+                        forecast_start
+                        <= forecast_time
+                        < forecast_end
                     ):
+                        continue
 
-                        filtered_forecast.append(
-                            hour
-                        )
+                filtered_forecast.append(hour)
 
-                except (
-                    ValueError,
-                    TypeError
-                ):
+            except (
+                ValueError,
+                TypeError
+            ):
 
-                    continue
-
-        else:
-
-            filtered_forecast = hourly_forecast
+                continue
 
         # --------------------------------
         # Create forecast cards
