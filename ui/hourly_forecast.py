@@ -595,10 +595,47 @@ class HourlyForecastSection:
                 current_time = None
 
         # --------------------------------
+        # Remove previous hours
+        # --------------------------------
+
+        if current_time is not None:
+
+            filtered_forecast = []
+
+            for hour in hourly_forecast:
+
+                try:
+
+                    forecast_time = datetime.fromisoformat(
+                        hour.time
+                    )
+
+                    if forecast_time >= current_time.replace(
+                        minute=0,
+                        second=0,
+                        microsecond=0
+                    ):
+
+                        filtered_forecast.append(
+                            hour
+                        )
+
+                except (
+                    ValueError,
+                    TypeError
+                ):
+
+                    continue
+
+        else:
+
+            filtered_forecast = hourly_forecast
+
+        # --------------------------------
         # Create forecast cards
         # --------------------------------
 
-        for hour in hourly_forecast:
+        for hour in filtered_forecast:
 
             card = HourlyForecastCard(
                 self.content
