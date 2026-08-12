@@ -170,20 +170,12 @@ class SearchBar:
         self,
         query,
         generation
-    ):
-
-        search_started = time.perf_counter()
-        print()
-        print("========== SEARCH DEBUG ==========")
-        print(
-            f"Search started: {search_started:.4f}"
-        )
+    ):        
         thread = threading.Thread(
             target=self.search_worker,
             args=(
                 query,
-                generation,
-                search_started
+                generation
             ),
             daemon=True
         )
@@ -193,39 +185,14 @@ class SearchBar:
     def search_worker(
         self,
         query,
-        generation,
-        search_started
+        generation
     ):
 
         try:
 
-            api_started = time.perf_counter()
-
-            print(
-                f"API started:   {api_started:.4f}"
-            )
-
             locations = search_locations(
                 query
             )
-
-            api_finished = time.perf_counter()
-
-            print(
-                f"API finished:  {api_finished:.4f}"
-            )
-
-            print(
-                f"API time:      "
-                f"{api_finished - api_started:.3f} seconds"
-            )
-
-            print(
-                f"Total search:  "
-                f"{api_finished - search_started:.3f} seconds"
-            )
-
-            print("==================================")
 
             self.parent.after(
                 0,
