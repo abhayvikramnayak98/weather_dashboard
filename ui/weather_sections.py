@@ -604,6 +604,7 @@ class DailyForecastSection(
 
         self.canvas = Canvas(
             self.content,
+            height=155,
             highlightthickness=0,
             borderwidth=0
         )
@@ -752,9 +753,15 @@ class DailyForecastSection(
 
         self.card_container.update_idletasks()
 
+        self.canvas.configure(
+            height=self.card_container.winfo_reqheight()
+        )
+
         self._sync_canvas_window()
 
         self._update_scrollregion()
+
+        self._update_scrollbar_visibility()
 
     # --------------------------------
     # Update scroll region
@@ -775,16 +782,10 @@ class DailyForecastSection(
     # Sync canvas window
     # --------------------------------
 
-    def _sync_canvas_window(
-        self
-    ):
+    def _sync_canvas_window(self):
 
         content_width = (
             self.card_container.winfo_reqwidth()
-        )
-
-        content_height = (
-            self.card_container.winfo_reqheight()
         )
 
         canvas_width = (
@@ -798,13 +799,29 @@ class DailyForecastSection(
 
         self.canvas.itemconfigure(
             self.canvas_window,
-            width=window_width,
-            height=content_height
+            width=window_width
         )
 
-        self.canvas.configure(
-            height=content_height
+    def _update_scrollbar_visibility(self):
+
+        content_width = (
+            self.card_container.winfo_reqwidth()
         )
+
+        canvas_width = (
+            self.canvas.winfo_width()
+        )
+
+        if content_width > canvas_width:
+            # Cards do not fit → show scrollbar
+            self.scrollbar.grid(
+                row=1,
+                column=0,
+                sticky="ew"
+            )
+        else:
+            # All cards fit → hide scrollbar
+            self.scrollbar.grid_remove()
 
     # --------------------------------
     # Canvas resize
