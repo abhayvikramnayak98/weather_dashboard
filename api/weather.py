@@ -60,8 +60,15 @@ def get_current_weather(
             # --------------------------------
 
             "daily": (
+                "weather_code,"
+                "temperature_2m_max,"
+                "temperature_2m_min,"
+                "precipitation_probability_max,"
+                "precipitation_sum,"
+                "rain_sum,"
                 "sunrise,"
-                "sunset"
+                "sunset,"
+                "uv_index_max"
             ),
 
             # --------------------------------
@@ -71,7 +78,7 @@ def get_current_weather(
             "timezone": timezone,
 
             # We only need today's sunrise/sunset.
-            "forecast_days": 2,
+            "forecast_days": 7,
         },
 
         timeout=10,

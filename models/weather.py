@@ -86,6 +86,12 @@ class WeatherData:
 
     hourly_forecast: list["HourlyWeather"] | None = None
 
+    # --------------------------------
+    # Daily forecast
+    # --------------------------------
+
+    daily_forecast: list["DailyWeather"] | None = None
+
 @dataclass
 class HourlyWeather:
 
@@ -136,6 +142,57 @@ class HourlyWeather:
     # --------------------------------
 
     uv_index: Optional[float] = None
+
+# ==============================================
+# Daily Weather
+# ==============================================
+
+@dataclass
+class DailyWeather:
+
+    # --------------------------------
+    # Date
+    # --------------------------------
+
+    date: str
+
+    # --------------------------------
+    # Weather condition
+    # --------------------------------
+
+    weather_code: Optional[int] = None
+
+    # --------------------------------
+    # Temperature
+    # --------------------------------
+
+    temperature_max: Optional[float] = None
+
+    temperature_min: Optional[float] = None
+
+    # --------------------------------
+    # Precipitation
+    # --------------------------------
+
+    precipitation_probability: Optional[float] = None
+
+    precipitation: Optional[float] = None
+
+    rain: Optional[float] = None
+
+    # --------------------------------
+    # Sun
+    # --------------------------------
+
+    sunrise: Optional[str] = None
+
+    sunset: Optional[str] = None
+
+    # --------------------------------
+    # UV
+    # --------------------------------
+
+    uv_index_max: Optional[float] = None
 
 def get_aqi_category(aqi):
 
@@ -400,6 +457,145 @@ def create_weather_data(
     )
 
     # --------------------------------
+    # Daily forecast
+    # --------------------------------
+
+    daily_dates = daily.get(
+        "time",
+        []
+    )
+
+    daily_weather_codes = daily.get(
+        "weather_code",
+        []
+    )
+
+    daily_temperature_max = daily.get(
+        "temperature_2m_max",
+        []
+    )
+
+    daily_temperature_min = daily.get(
+        "temperature_2m_min",
+        []
+    )
+
+    daily_precipitation_probability = daily.get(
+        "precipitation_probability_max",
+        []
+    )
+
+    daily_precipitation = daily.get(
+        "precipitation_sum",
+        []
+    )
+
+    daily_rain = daily.get(
+        "rain_sum",
+        []
+    )
+
+    daily_sunrise = daily.get(
+        "sunrise",
+        []
+    )
+
+    daily_sunset = daily.get(
+        "sunset",
+        []
+    )
+
+    daily_uv = daily.get(
+        "uv_index_max",
+        []
+    )
+
+    daily_forecast = []
+
+    for index, date in enumerate(
+        daily_dates
+    ):
+
+        daily_forecast.append(
+            DailyWeather(
+
+                date=date,
+
+                weather_code=(
+                    daily_weather_codes[index]
+                    if index < len(
+                        daily_weather_codes
+                    )
+                    else None
+                ),
+
+                temperature_max=(
+                    daily_temperature_max[index]
+                    if index < len(
+                        daily_temperature_max
+                    )
+                    else None
+                ),
+
+                temperature_min=(
+                    daily_temperature_min[index]
+                    if index < len(
+                        daily_temperature_min
+                    )
+                    else None
+                ),
+
+                precipitation_probability=(
+                    daily_precipitation_probability[index]
+                    if index < len(
+                        daily_precipitation_probability
+                    )
+                    else None
+                ),
+
+                precipitation=(
+                    daily_precipitation[index]
+                    if index < len(
+                        daily_precipitation
+                    )
+                    else None
+                ),
+
+                rain=(
+                    daily_rain[index]
+                    if index < len(
+                        daily_rain
+                    )
+                    else None
+                ),
+
+                sunrise=(
+                    daily_sunrise[index]
+                    if index < len(
+                        daily_sunrise
+                    )
+                    else None
+                ),
+
+                sunset=(
+                    daily_sunset[index]
+                    if index < len(
+                        daily_sunset
+                    )
+                    else None
+                ),
+
+                uv_index_max=(
+                    daily_uv[index]
+                    if index < len(
+                        daily_uv
+                    )
+                    else None
+                ),
+            )
+        )
+
+    # --------------------------------
     # Weather condition
     # --------------------------------
 
@@ -528,4 +724,10 @@ def create_weather_data(
         # --------------------------------
 
         hourly_forecast=hourly_forecast,
+
+        # --------------------------------
+        # Daily forecast
+        # --------------------------------
+
+        daily_forecast=daily_forecast,
     )

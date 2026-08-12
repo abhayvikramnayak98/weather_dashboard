@@ -1,4 +1,4 @@
-from tkinter import ttk
+from tkinter import Canvas, ttk
 
 from config.settings import FONT_FAMILY
 from utils.compass import degrees_to_compass
@@ -315,6 +315,521 @@ class WeatherMetric:
             sticky="nsew"
         )
 
+# ==============================================
+# Daily Forecast Card
+# ==============================================
+
+class DailyForecastCard:
+
+    def __init__(
+        self,
+        parent
+    ):
+
+        self.frame = ttk.Frame(
+            parent,
+            style="WeatherCard.TFrame",
+            padding=(12, 12)
+        )
+
+        # --------------------------------
+        # Day
+        # --------------------------------
+
+        self.day = ttk.Label(
+            self.frame,
+            text="—",
+            font=(
+                FONT_FAMILY,
+                9,
+                "bold"
+            ),
+            style="WeatherCardTitle.TLabel",
+            anchor="center"
+        )
+
+        self.day.pack(
+            fill="x"
+        )
+
+        # --------------------------------
+        # Weather symbol
+        # --------------------------------
+
+        self.icon = ttk.Label(
+            self.frame,
+            text="—",
+            font=(
+                FONT_FAMILY,
+                20
+            ),
+            anchor="center"
+        )
+
+        self.icon.pack(
+            fill="x",
+            pady=(8, 4)
+        )
+
+        # --------------------------------
+        # Temperature
+        # --------------------------------
+
+        self.temperature = ttk.Label(
+            self.frame,
+            text="—",
+            font=(
+                FONT_FAMILY,
+                14,
+                "bold"
+            ),
+            style="WeatherMetric.TLabel",
+            anchor="center"
+        )
+
+        self.temperature.pack(
+            fill="x"
+        )
+
+        # --------------------------------
+        # Precipitation
+        # --------------------------------
+
+        self.precipitation = ttk.Label(
+            self.frame,
+            text="—",
+            font=(
+                FONT_FAMILY,
+                8
+            ),
+            style="WeatherSecondary.TLabel",
+            anchor="center"
+        )
+
+        self.precipitation.pack(
+            fill="x",
+            pady=(4, 0)
+        )
+
+    # --------------------------------
+    # Update
+    # --------------------------------
+
+    def update(
+        self,
+        daily
+    ):
+
+        self.day.config(
+            text=self.format_day(
+                daily.date
+            )
+        )
+
+        self.icon.config(
+            text=self.get_weather_symbol(
+                daily.weather_code
+            )
+        )
+
+        max_temp = daily.temperature_max
+        min_temp = daily.temperature_min
+
+        if (
+            max_temp is not None
+            and min_temp is not None
+        ):
+
+            self.temperature.config(
+                text=(
+                    f"{max_temp:.0f}° "
+                    f"/ "
+                    f"{min_temp:.0f}°"
+                )
+            )
+
+        else:
+
+            self.temperature.config(
+                text="—"
+            )
+
+        if daily.precipitation_probability is not None:
+
+            self.precipitation.config(
+                text=(
+                    f"Rain "
+                    f"{daily.precipitation_probability:.0f}%"
+                )
+            )
+
+        else:
+
+            self.precipitation.config(
+                text="—"
+            )
+
+    # --------------------------------
+    # Grid placement
+    # --------------------------------
+
+    def grid(
+        self,
+        row,
+        column
+    ):
+
+        self.frame.grid(
+            row=row,
+            column=column,
+            padx=4,
+            pady=4,
+            sticky="nsew"
+        )
+
+    # --------------------------------
+    # Day formatting
+    # --------------------------------
+
+    @staticmethod
+    def format_day(
+        value
+    ):
+
+        if not value:
+
+            return "—"
+
+        try:
+
+            from datetime import datetime
+
+            date = datetime.fromisoformat(
+                value
+            )
+
+            return date.strftime(
+                "%a"
+            ).upper()
+
+        except (
+            ValueError,
+            TypeError
+        ):
+
+            return value
+
+    # --------------------------------
+    # Weather symbol
+    # --------------------------------
+
+    @staticmethod
+    def get_weather_symbol(
+        weather_code
+    ):
+
+        symbols = {
+
+            0: "☀️",
+
+            1: "🌤️",
+            2: "⛅",
+            3: "☁️",
+
+            45: "🌫️",
+            48: "🌫️",
+
+            51: "🌦️",
+            53: "🌦️",
+            55: "🌧️",
+
+            56: "🌧️",
+            57: "🌧️",
+
+            61: "🌧️",
+            63: "🌧️",
+            65: "🌧️",
+
+            66: "🌧️",
+            67: "🌧️",
+
+            71: "🌨️",
+            73: "🌨️",
+            75: "❄️",
+
+            77: "❄️",
+
+            80: "🌦️",
+            81: "🌦️",
+            82: "🌧️",
+
+            85: "🌨️",
+            86: "🌨️",
+
+            95: "⛈️",
+            96: "⛈️",
+            99: "⛈️",
+        }
+
+        return symbols.get(
+            weather_code,
+            "—"
+        )
+
+# ==============================================
+# Daily Forecast
+# ==============================================
+
+class DailyForecastSection(
+    WeatherSection
+):
+
+    CARD_WIDTH = 160
+
+    def __init__(
+        self,
+        parent
+    ):
+
+        super().__init__(
+            parent,
+            "Daily Forecast"
+        )
+
+        self.cards = []
+
+        # --------------------------------
+        # Horizontal scrolling
+        # --------------------------------
+
+        self.canvas = Canvas(
+            self.content,
+            highlightthickness=0,
+            borderwidth=0
+        )
+
+        self.scrollbar = ttk.Scrollbar(
+            self.content,
+            orient="horizontal",
+            command=self.canvas.xview
+        )
+
+        self.canvas.configure(
+            xscrollcommand=self.scrollbar.set
+        )
+
+        self.canvas.grid(
+            row=0,
+            column=0,
+            sticky="nsew"
+        )
+
+        self.scrollbar.grid(
+            row=1,
+            column=0,
+            sticky="ew"
+        )
+
+        self.content.columnconfigure(
+            0,
+            weight=1
+        )
+
+        self.content.rowconfigure(
+            0,
+            weight=0
+        )
+
+        # --------------------------------
+        # Scrollable card area
+        # --------------------------------
+
+        self.card_container = ttk.Frame(
+            self.canvas
+        )
+
+        self.canvas_window = (
+            self.canvas.create_window(
+                0,
+                0,
+                window=self.card_container,
+                anchor="nw"
+            )
+        )
+
+        self.card_container.bind(
+            "<Configure>",
+            self._update_scrollregion
+        )
+
+        self.canvas.bind(
+            "<Configure>",
+            self._on_canvas_resize
+        )
+
+    # --------------------------------
+    # Update
+    # --------------------------------
+
+    def update(
+        self,
+        daily_forecast
+    ):
+
+        # --------------------------------
+        # Remove existing cards
+        # --------------------------------
+
+        for card in self.cards:
+
+            card.frame.destroy()
+
+        self.cards.clear()
+
+        # --------------------------------
+        # Create cards
+        # --------------------------------
+
+        for daily in daily_forecast[:7]:
+
+            card = DailyForecastCard(
+                self.card_container
+            )
+
+            card.update(
+                daily
+            )
+
+            self.cards.append(
+                card
+            )
+
+        self.responsive_layout()
+
+    # --------------------------------
+    # Responsive layout
+    # --------------------------------
+
+    def responsive_layout(
+        self,
+        width=None
+    ):
+
+        # --------------------------------
+        # Configure card columns
+        # --------------------------------
+
+        for column in range(7):
+
+            self.card_container.columnconfigure(
+                column,
+                weight=1,
+                minsize=self.CARD_WIDTH,
+                uniform="daily_card"
+            )
+
+        # --------------------------------
+        # Configure row
+        # --------------------------------
+
+        self.card_container.rowconfigure(
+            0,
+            weight=0
+        )
+
+        # --------------------------------
+        # Place cards
+        # --------------------------------
+
+        for index, card in enumerate(
+            self.cards
+        ):
+
+            card.grid(
+                0,
+                index
+            )
+
+        self.card_container.update_idletasks()
+
+        self._sync_canvas_window()
+
+        self._update_scrollregion()
+
+    # --------------------------------
+    # Update scroll region
+    # --------------------------------
+
+    def _update_scrollregion(
+        self,
+        event=None
+    ):
+
+        self.canvas.configure(
+            scrollregion=self.canvas.bbox(
+                "all"
+            )
+        )
+
+    # --------------------------------
+    # Sync canvas window
+    # --------------------------------
+
+    def _sync_canvas_window(
+        self
+    ):
+
+        content_width = (
+            self.card_container.winfo_reqwidth()
+        )
+
+        content_height = (
+            self.card_container.winfo_reqheight()
+        )
+
+        canvas_width = (
+            self.canvas.winfo_width()
+        )
+
+        window_width = max(
+            canvas_width,
+            content_width
+        )
+
+        self.canvas.itemconfigure(
+            self.canvas_window,
+            width=window_width,
+            height=content_height
+        )
+
+        self.canvas.configure(
+            height=content_height
+        )
+
+    # --------------------------------
+    # Canvas resize
+    # --------------------------------
+
+    def _on_canvas_resize(
+        self,
+        event
+    ):
+
+        content_width = (
+            self.card_container.winfo_reqwidth()
+        )
+
+        canvas_width = max(
+            event.width,
+            content_width
+        )
+
+        self.canvas.itemconfigure(
+            self.canvas_window,
+            width=canvas_width
+        )
+
+        self._update_scrollregion()
 
 # ==============================================
 # Current Conditions
