@@ -26,6 +26,8 @@ class SearchBar:
         self.locations = []
 
         self.search_generation = 0
+        self.last_query = ""
+        self.active_query = None
 
         self.build_ui()
 
@@ -132,6 +134,10 @@ class SearchBar:
             .strip()
         )
 
+        if query == self.last_query:
+
+            return
+
         if self.search_after_id is not None:
 
             self.parent.after_cancel(
@@ -144,7 +150,11 @@ class SearchBar:
 
         if len(query) < 2:
 
+            self.last_query = query
+
             return
+
+        self.last_query = query
 
         self.search_generation += 1
 
@@ -170,7 +180,17 @@ class SearchBar:
         self,
         query,
         generation
-    ):        
+    ):
+        # --------------------------------
+        # Prevent duplicate query
+        # --------------------------------
+
+        if query == self.active_query:
+
+            return
+
+        self.active_query = query
+        
         thread = threading.Thread(
             target=self.search_worker,
             args=(
@@ -310,6 +330,22 @@ class SearchBar:
         event=None
     ):
 
+        # --------------------------------
+        # Cancel pending search
+        # --------------------------------
+
+        if self.search_after_id is not None:
+
+            self.parent.after_cancel(
+                self.search_after_id
+            )
+
+            self.search_after_id = None
+
+        # --------------------------------
+        # Select first result
+        # --------------------------------
+
         if not self.locations:
 
             return "break"
@@ -347,6 +383,8 @@ class SearchBar:
         index = selection[0]
 
         location = self.locations[index]
+
+        self.active_query = None
 
         self.on_location_selected(
             location
