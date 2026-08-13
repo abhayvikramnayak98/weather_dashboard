@@ -77,7 +77,7 @@ class WeatherSection:
             columnspan=columnspan,
             padx=6,
             pady=6,
-            sticky="nsew"
+            sticky="new"
         )
 
     # --------------------------------
@@ -180,11 +180,11 @@ class WeatherSection:
 
         if width >= 900:
 
-            columns = 4
+            columns = min(4, len(self.metrics))
 
         elif width >= 600:
 
-            columns = 2
+            columns = min(2, len(self.metrics))
 
         else:
 

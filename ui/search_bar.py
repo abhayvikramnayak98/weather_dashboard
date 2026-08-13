@@ -4,7 +4,10 @@ import tkinter as tk
 from tkinter import ttk
 
 from api.geocoding import search_locations
-from config.settings import SEARCH_DEBOUNCE_MS
+from config.settings import (
+    SEARCH_DEBOUNCE_MS,
+    FONT_FAMILY
+)
 
 
 class SearchBar:
@@ -43,13 +46,13 @@ class SearchBar:
 
         self.frame.pack(
             fill="x",
-            padx=20,
-            pady=10
+            pady=(0, 2)
         )
 
         self.search_label = ttk.Label(
             self.frame,
-            text="Search city:"
+            text="Search city:",
+            font=(FONT_FAMILY, 11)
         )
 
         self.search_label.pack(
@@ -61,12 +64,13 @@ class SearchBar:
         self.search_entry = ttk.Entry(
             self.frame,
             textvariable=self.search_var,
-            width=40
+            width=40,
+            font=(FONT_FAMILY, 11)
         )
 
         self.search_entry.pack(
             side="left",
-            padx=10
+            padx=(8, 0)
         )
 
         self.search_entry.bind(
@@ -93,19 +97,48 @@ class SearchBar:
         # Results list
         # --------------------------------
 
-        self.results_list = tk.Listbox(
+        self.results_list = ttk.Treeview(
             self.parent,
-            height=5,
-            width=70,
-            activestyle="none",
-            selectmode=tk.SINGLE,
-            relief="solid",
-            borderwidth=1,
-            highlightthickness=0
+            columns=("location",),
+            show="tree",
+            height=1,
+            selectmode="browse"
+        )
+
+        self.results_list.column(
+            "#0",
+            width=0,
+            stretch=False
+        )
+
+        self.results_list.column(
+            "location",
+            anchor="w",
+            stretch=True
+        )
+
+        self.results_list.heading(
+            "location",
+            text=""
+        )
+
+        self.results_list.tag_configure(
+            "normal",
+            font=(FONT_FAMILY, 10)
+        )
+
+        self.results_list.tag_configure(
+            "highlighted",
+            font=(FONT_FAMILY, 10, "bold")
         )
 
         # Hide initially.
         self.results_list.pack_forget()
+
+        self.results_list.bind(
+            "<<TreeviewSelect>>",
+            self.on_result_highlight
+        )
 
         self.results_list.bind(
             "<Double-Button-1>",
@@ -120,6 +153,16 @@ class SearchBar:
         self.results_list.bind(
             "<Escape>",
             self.return_to_search
+        )
+
+        self.results_list.bind(
+            "<Up>",
+            self.move_selection_up
+        )
+
+        self.results_list.bind(
+            "<Down>",
+            self.move_selection_down
         )
 
     # --------------------------------
@@ -266,10 +309,8 @@ class SearchBar:
 
     def display_results(self):
 
-        self.results_list.delete(
-            0,
-            tk.END
-        )
+        for item in self.results_list.get_children():
+            self.results_list.delete(item)
 
         if not self.locations:
 
@@ -277,22 +318,60 @@ class SearchBar:
 
             return
 
-        for location in self.locations:
+        for index, location in enumerate(self.locations):
 
             self.results_list.insert(
-                tk.END,
-                location.display_name
+                "",
+                "end",
+                iid=str(index),
+                text="",
+                values=(location.display_name,),
+                tags=("normal",)
             )
 
-        # Show the dropdown.
-        self.results_list.pack(
-            fill="x",
-            padx=20,
-            pady=(0, 5)
+        # Size dropdown to the number of results,
+        # with a maximum of 5 visible rows.
+        result_count = min(
+            len(self.locations),
+            5
         )
 
+        self.results_list.configure(
+            height=result_count
+        )
+
+        self.results_list.pack(
+            fill="x",
+            pady=(0, 4)
+        )
+
+        # Highlight the first result.
         self.results_list.selection_set(
-            0
+            "0"
+        )
+
+        self.results_list.focus(
+            "0"
+        )
+
+    def on_result_highlight(self, event=None):
+
+        selected = self.results_list.selection()
+
+        for item in self.results_list.get_children():
+
+            self.results_list.item(
+                item,
+                tags=("normal",)
+            )
+
+        if not selected:
+
+            return
+
+        self.results_list.item(
+            selected[0],
+            tags=("highlighted",)
         )
 
     # --------------------------------
@@ -310,17 +389,210 @@ class SearchBar:
 
         self.results_list.focus_set()
 
-        self.results_list.selection_clear(
-            0,
-            tk.END
-        )
+        selected = self.results_list.selection()
+
+        if not selected:
+
+            self.results_list.selection_set(
+                "0"
+            )
+
+            self.results_list.focus(
+                "0"
+            )
+
+        return "break"
+
+    def move_selection_down(
+        self,
+        event=None
+    ):
+
+        if not self.locations:
+
+            return "break"
+
+        items = self.results_list.get_children()
+
+        if not items:
+
+            return "break"
+
+        selected = self.results_list.selection()
+
+        if not selected:
+
+            next_index = 0
+
+        else:
+
+            current_index = items.index(
+                selected[0]
+            )
+
+            next_index = min(
+                current_index + 1,
+                len(items) - 1
+            )
+
+        next_item = items[next_index]
 
         self.results_list.selection_set(
-            0
+            next_item
         )
 
-        self.results_list.activate(
-            0
+        self.results_list.focus(
+            next_item
+        )
+
+        self.results_list.see(
+            next_item
+        )
+
+        return "break"
+
+
+    def move_selection_up(
+        self,
+        event=None
+    ):
+
+        if not self.locations:
+
+            return "break"
+
+        items = self.results_list.get_children()
+
+        if not items:
+
+            return "break"
+
+        selected = self.results_list.selection()
+
+        if not selected:
+
+            previous_index = 0
+
+        else:
+
+            current_index = items.index(
+                selected[0]
+            )
+
+            previous_index = max(
+                current_index - 1,
+                0
+            )
+
+        previous_item = items[previous_index]
+
+        self.results_list.selection_set(
+            previous_item
+        )
+
+        self.results_list.focus(
+            previous_item
+        )
+
+        self.results_list.see(
+            previous_item
+        )
+
+        return "break"
+    
+    def move_selection_down(
+        self,
+        event=None
+    ):
+
+        if not self.locations:
+
+            return "break"
+
+        items = self.results_list.get_children()
+
+        if not items:
+
+            return "break"
+
+        selected = self.results_list.selection()
+
+        if not selected:
+
+            next_index = 0
+
+        else:
+
+            current_index = items.index(
+                selected[0]
+            )
+
+            next_index = min(
+                current_index + 1,
+                len(items) - 1
+            )
+
+        next_item = items[next_index]
+
+        self.results_list.selection_set(
+            next_item
+        )
+
+        self.results_list.focus(
+            next_item
+        )
+
+        self.results_list.see(
+            next_item
+        )
+
+        return "break"
+
+
+    def move_selection_up(
+        self,
+        event=None
+    ):
+
+        if not self.locations:
+
+            return "break"
+
+        items = self.results_list.get_children()
+
+        if not items:
+
+            return "break"
+
+        selected = self.results_list.selection()
+
+        if not selected:
+
+            previous_index = 0
+
+        else:
+
+            current_index = items.index(
+                selected[0]
+            )
+
+            previous_index = max(
+                current_index - 1,
+                0
+            )
+
+        previous_item = items[previous_index]
+
+        self.results_list.selection_set(
+            previous_item
+        )
+
+        self.results_list.focus(
+            previous_item
+        )
+
+        self.results_list.see(
+            previous_item
         )
 
         return "break"
@@ -372,15 +644,19 @@ class SearchBar:
         event=None
     ):
 
-        selection = (
-            self.results_list.curselection()
-        )
+        selection = self.results_list.selection()
 
         if not selection:
 
             return "break"
 
-        index = selection[0]
+        index = int(
+            selection[0]
+        )
+
+        if index < 0 or index >= len(self.locations):
+
+            return "break"
 
         location = self.locations[index]
 
@@ -403,10 +679,11 @@ class SearchBar:
         event=None
     ):
 
-        self.results_list.delete(
-            0,
-            tk.END
-        )
+        for item in self.results_list.get_children():
+
+            self.results_list.delete(
+                item
+            )
 
         self.locations = []
 

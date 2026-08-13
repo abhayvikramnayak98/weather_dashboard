@@ -58,7 +58,7 @@ class MainWindow:
 
         header = ttk.Frame(
             self.root,
-            padding=(20, 15)
+            padding=(24, 14)
         )
 
         header.pack(
@@ -109,11 +109,27 @@ class MainWindow:
         )
 
         # --------------------------------
+        # Dashboard Toolbar
+        # --------------------------------
+
+        self.info_panel = ttk.Frame(
+            self.root,
+            style="DashboardInfo.TFrame",
+            padding=(20, 8)
+        )
+
+        self.info_panel.pack(
+            fill="x",
+            padx=0,
+            pady=0
+        )
+
+        # --------------------------------
         # City Search
         # --------------------------------
 
         SearchBar(
-            self.root,
+            self.info_panel,
             self.location_selected
         )
 
@@ -122,15 +138,16 @@ class MainWindow:
         # --------------------------------
 
         self.location_label = ttk.Label(
-            self.root,
+            self.info_panel,
             text="No location selected",
+            style="DashboardLocation.TLabel",
             font=FONT_LOCATION
         )
 
         self.location_label.pack(
             anchor="w",
-            padx=20,
-            pady=(5, 0)
+            padx=0,
+            pady=(2, 0)
         )
 
         # --------------------------------
@@ -138,15 +155,16 @@ class MainWindow:
         # --------------------------------
 
         self.status_label = ttk.Label(
-            self.root,
+            self.info_panel,
             text="Search for a city to begin",
+            style="DashboardStatus.TLabel",
             font=FONT_STATUS
         )
 
         self.status_label.pack(
             anchor="w",
-            padx=20,
-            pady=(2, 5)
+            padx=0,
+            pady=(1, 2)
         )
 
         # --------------------------------
@@ -258,6 +276,10 @@ class MainWindow:
         self.weather_cards.update(
             weather,
             self.selected_location.timezone
+        )
+
+        self.status_label.config(
+            text="Current weather and forecast"
         )
 
         self.schedule_refresh()

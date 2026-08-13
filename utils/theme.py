@@ -143,6 +143,32 @@ class ThemeManager:
             background=colors["background"],
         )
 
+
+        # --------------------------------
+        # Dashboard Info Panel
+        # --------------------------------
+
+        self.style.configure(
+            "DashboardInfo.TFrame",
+            background=colors["surface"],
+            bordercolor=colors["border"],
+            relief="solid",
+            borderwidth=1,
+        )
+
+        self.style.configure(
+            "DashboardLocation.TLabel",
+            background=colors["surface"],
+            foreground=colors["text"],
+        )
+
+        self.style.configure(
+            "DashboardStatus.TLabel",
+            background=colors["surface"],
+            foreground=colors["secondary"],
+        )
+
+
         # --------------------------------
         # Label
         # --------------------------------
