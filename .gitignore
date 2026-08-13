@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Packaging/build artifacts
+build/
+dist/
+*.egg-info/
+
+# Test/coverage/cache
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# IDE/editor
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local secrets/configuration
+.env
+.env.*
+*.local
+
+# Generated project-tree output
+project_tree.txt
